@@ -6,32 +6,19 @@ Langgraph practice with Langsmith tracing and Tool calls
 """
 import os
 from typing import Annotated, TypedDict
-from langgraph.graph import StateGraph, START, END
+from langgraph.graph import StateGraph, START
 from langgraph.graph.message import add_messages
-import matplotlib.pyplot as plt
-from PIL import Image
-import io
+
 import gradio as gr
 from langgraph.prebuilt import ToolNode, tools_condition
-from langchain_deepseek import ChatDeepSeek
 from langchain_community.utilities import GoogleSerperAPIWrapper
-from langchain_core.tools import Tool, tool, StructuredTool
+from langchain_core.tools import tool, StructuredTool
 import requests
 from dotenv import load_dotenv
-from requests import Response
+
+from projectbase.llm import llm
 
 load_dotenv(override=True)
-
-### Setup LLM
-llm = ChatDeepSeek(
-    model="deepseek-v4-flash",
-    temperature=0.3,
-    extra_body={
-        "thinking": {
-            "type": "disabled"
-        }
-    }
-)
 
 ### Create tools
 serper = GoogleSerperAPIWrapper()
@@ -64,7 +51,6 @@ tools = [search_tool, send_notification]
 llm_with_tools = llm.bind_tools(tools)
 
 ### Create State
-
 class State(TypedDict):
     messages: Annotated[list, add_messages]
 
@@ -86,20 +72,6 @@ gbuilder.add_edge("tools", "chatbot")
 
 graph = gbuilder.compile()
 
-def display_graph(graph):
-    """Display the graph in a standalone window"""
-    # Get the PNG image as bytes
-    img_data = graph.get_graph().draw_mermaid_png()
-
-    # Convert bytes to PIL Image
-    img = Image.open(io.BytesIO(img_data))
-
-    # Display with matplotlib
-    plt.figure(figsize=(10, 8))
-    plt.imshow(img)
-    plt.axis('off')
-    plt.title("Graph Visualization")
-    plt.show()
 
 def chat(user_input: str, history):
     result = graph.invoke({"messages": [{"role": "user", "content": user_input}]})
