@@ -24,9 +24,9 @@ graph_builder.add_edge(START, "worker")
 
 # Compile the graph
 memory = MemorySaver()
-graph = graph_builder.compile(checkpointer=memory)
+sidekick_graph = graph_builder.compile(checkpointer=memory)
 
 
 
 if __name__ == "__main__":
-    display_graph(graph)
+    display_graph(sidekick_graph)
