@@ -1,5 +1,7 @@
 from webscraperagent.llm_with_tools import ws_llm_with_tools
 from webscraperagent.state import State
 
-def chatbot_node(state: State):
-    return {"messages":[ws_llm_with_tools.invoke(state["messages"])]}
+
+async def chatbot_node(state: State):
+    response = await ws_llm_with_tools.ainvoke(state["messages"])
+    return {"messages": [response]}
