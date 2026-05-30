@@ -93,7 +93,7 @@ def evaluator(state: State) -> State:
     new_state = {
         "messages": [{"role": "assistant", "content": f"Evaluator Feedback on this answer: {eval_result.feedback}"}],
         "feedback_on_work": eval_result.feedback,
-        "success_criteria_met": eval_result.success_criteria_met,
+        "is_success_criteria_met": eval_result.is_success_criteria_met,
         "user_input_needed": eval_result.user_input_needed
     }
     return new_state
